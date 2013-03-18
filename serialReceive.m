@@ -21,6 +21,10 @@ function serialReceive(obj, event)
         elseif(strcmp(cmd,'RESP'))
             disp('RESP received');
             logEvent('SerialReceive,RESPONSE');
+        elseif(strcmp(cmd,'RING'))
+            disp('RING received');
+            logEvent('SerialReceive,SCHEDULE_RING');
+            schedulePhoneRing(rand() * 5);
         elseif(strcmp(cmd,'DATA')) % Generic data
             disp('DATA received');
             logEvent('SerialReceive,DATA_INIT');

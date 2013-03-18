@@ -129,6 +129,7 @@ function results = NavSuite()
         elseif(exp.ringScheduled && GetSecs() > exp.ringAt)
             disp('Starting ringtone');
             exp.ringScheduled = false;
+            exp.ringDismiss = false;
             exp.phoneRinging = true;
             PsychPortAudio('Stop',exp.audio);
             PsychPortAudio('FillBuffer',exp.audio,exp.ringTone);
