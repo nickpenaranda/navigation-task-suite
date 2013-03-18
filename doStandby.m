@@ -1,15 +1,22 @@
 function doStandby()
     global exp;
     
+    PHONE_SCREEN_DURATION = 1.5; % Seconds
+    
     if(exp.redraw)
         Screen('FillRect', exp.scr, exp.phoneColor, exp.phoneRect);
         Screen('FrameRect', exp.scr, 255, exp.phoneRect, 1);
-        Screen('DrawText', exp.scr, exp.phoneText, exp.phoneTextCoords(1),exp.phoneTextCoords(2), 255);
+        %Screen('DrawText', exp.scr, exp.phoneText, exp.phoneTextCoords(1),exp.phoneTextCoords(2), 255);
+        DrawFormattedText(exp.scr, exp.phoneText, exp.phoneTextCoords(1), exp.phoneTextCoords(2), 255);
 
         Screen('FillRect', exp.scr, exp.navColor, exp.navRect);
         Screen('FrameRect', exp.scr, 255, exp.navRect, 1);
-        Screen('DrawText', exp.scr, exp.navText, exp.navTextCoords(1), exp.navTextCoords(2), 255);
+        %Screen('DrawText', exp.scr, exp.navText, exp.navTextCoords(1), exp.navTextCoords(2), 255);
+        DrawFormattedText(exp.scr, exp.navText, exp.navTextCoords(1), exp.navTextCoords(2), 255);
 
+        Screen('FillRect', exp.scr, [128 0 0], exp.stopRect);
+        Screen('FrameRect', exp.scr, 128, exp.stopRect, 1);
+        
         Screen('Flip', exp.scr);
         clearRedraw();
     end
@@ -17,11 +24,17 @@ function doStandby()
     [x,y,buttons] = GetMouse(exp.scr);
     if(any(buttons))
         if(IsInRect(x,y,exp.phoneRect)) % Clicked in phone rect
+            exp.ringDismiss = true;
+            exp.stateExpireTime = GetSecs() + PHONE_SCREEN_DURATION;
             exp.state = exp.PHONE;
             expRedraw();
         elseif(IsInRect(x,y,exp.navRect)) % Clicked in nav rect
+            logEvent('NavigationEntered');
             exp.state = exp.NAV;
             expRedraw();
+        elseif(IsInRect(x,y,exp.stopRect)) % Clicked in stop rect
+            logEvent('RequestStop');
+            exp.state = exp.STOP;
         end
     end
     

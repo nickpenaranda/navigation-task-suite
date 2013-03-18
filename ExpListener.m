@@ -64,6 +64,21 @@ function ExpListener_OpeningFcn(hObject, eventdata, handles, varargin)
     set(exp.serial,'BytesAvailableFcnMode','terminator');
     set(exp.serial,'BytesAvailableFcn',@serialReceive);
     
+    % Audio stuff
+    InitializePsychSound;
+    exp.audio = PsychPortAudio('Open',[],[],[],44100,2);
+    exp.ringTone = wavread('ringtone.wav','double')';
+    PsychPortAudio('FillBuffer',exp.audio,exp.ringTone);
+    
+    exp.ParticipantNumber = '0';
+    exp.logFile = -1;
+    exp.startTime = GetSecs();
+    
+    exp.ringAt = GetSecs();
+    exp.ringScheduled = false;
+    exp.ringDismiss = false;
+    exp.phoneRinging = false;
+    
     handles.output = hObject;
     guidata(hObject, handles);
 
@@ -84,9 +99,18 @@ function checkListen_Callback(hObject, eventdata, handles)
 function btnStartTask_Callback(hObject, eventdata, handles)
     global exp;
 
+    % Init logfile
+    logName = sprintf('Log_%s_%s.csv', ...
+        exp.ParticipantNumber, ...
+        datestr(now,'yy.mm.dd_HH.MM.SS'));
+    exp.logFile = fopen(logName,'wt');
+    fprintf(exp.logFile,'time (s),message type,data1,data2,data3,data4,data5,data6,data7,data8\n');
+    
     exp.state = exp.STANDBY;
+    exp.stateExpireTime = GetSecs();
     expRedraw();
-
+    
+    schedulePhoneRing(5);
     % Run the task front-end
     NavSuite();
     
@@ -108,5 +132,7 @@ function btnDebug_Callback(hObject, eventdata, handles)
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
     global exp;
     exp.state = exp.STOP;
+    fclose(exp.serial);
+    PsychPortAudio('Close');
     % Hint: delete(hObject) closes the figure
     delete(hObject);
