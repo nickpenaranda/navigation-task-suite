@@ -23,19 +23,27 @@ function doStandby()
     
     [x,y,buttons] = GetMouse(exp.scr);
     if(any(buttons))
-        if(IsInRect(x,y,exp.phoneRect)) % Clicked in phone rect
-            exp.ringDismiss = true;
+        if(~exp.clicked && IsInRect(x,y,exp.phoneRect)) % Clicked in phone rect
+            if(~exp.phoneRinging)
+                doClick();
+            else
+                exp.ringDismiss = true;
+            end
             exp.stateExpireTime = GetSecs() + PHONE_SCREEN_DURATION;
             exp.state = exp.PHONE;
             expRedraw();
-        elseif(IsInRect(x,y,exp.navRect)) % Clicked in nav rect
+        elseif(~exp.clicked && IsInRect(x,y,exp.navRect)) % Clicked in nav rect
             logEvent('NavigationEntered');
             exp.state = exp.NAV;
+            doClick();
             expRedraw();
-        elseif(IsInRect(x,y,exp.stopRect)) % Clicked in stop rect
+        elseif(~exp.clicked && IsInRect(x,y,exp.stopRect)) % Clicked in stop rect
             logEvent('RequestStop');
+            doClick();
             exp.state = exp.STOP;
         end
+    else
+        exp.clicked = false;
     end
     
 end

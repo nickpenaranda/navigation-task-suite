@@ -67,9 +67,12 @@ function ExpListener_OpeningFcn(hObject, eventdata, handles, varargin)
     % Audio stuff
     InitializePsychSound;
     exp.audio = PsychPortAudio('Open',[],[],[],44100,2);
-    exp.ringTone = wavread('ringtone.wav','double')';
-    PsychPortAudio('FillBuffer',exp.audio,exp.ringTone);
     
+    exp.ringTone = wavread('ringtone.wav','double')';
+    exp.click = wavread('blip_click.wav','double')';
+
+    PsychPortAudio('FillBuffer',exp.audio,exp.ringTone);
+
     exp.ParticipantNumber = '0';
     exp.logFile = -1;
     exp.startTime = GetSecs();

@@ -33,7 +33,7 @@ function results = NavSuite()
     areaPadding = 32;
     exp.areaPadding = areaPadding;
 
-    % Standby mode
+    exp.clicked = false;
     
     exp.phoneColor = [93 138 102];
     exp.phoneText = 'Dismiss Call';
@@ -88,7 +88,24 @@ function results = NavSuite()
         exp.scrRect(4) - areaPadding - exp.symButtonHeight, ...
         exp.mx + (exp.symButtonWidth * 1.5) + areaPadding, ...
         exp.scrRect(4) - areaPadding];
-
+    
+    exp.pathColors = {[120 158 204] [178 111 105] [242 255 179] [64]};
+    exp.pathNodeSize = 8;
+    exp.pathWeight = 2;
+    exp.pathScale = 4000;
+    
+    pathIn = load('test.path','-MAT'); % Placeholder
+    exp.path = pathIn.path;
+    exp.path(:,1:2) = exp.path(:,1:2) * exp.pathScale;
+    disp(exp.path);
+    
+    exp.navPosX = exp.path(1,1);
+    exp.navPosY = exp.path(1,2);
+    exp.nodeIndex = 1;
+    exp.navDragging = false;
+    exp.navDragLastX = 0;
+    exp.navDragLastY = 0;
+    
     logEvent('StartExperiment');
     
     while(exp.state ~= exp.STOP)
@@ -105,17 +122,21 @@ function results = NavSuite()
         end
         
         WaitSecs('UntilTime',lastLoop + loopDelay);
+        
         if(exp.phoneRinging && exp.ringDismiss)
             PsychPortAudio('Stop',exp.audio);
+            doClick(); % This needs to be here so that the click itself is not cancelled
         elseif(exp.ringScheduled && GetSecs() > exp.ringAt)
-            PsychPortAudio('Start',exp.audio);
+            disp('Starting ringtone');
             exp.ringScheduled = false;
             exp.phoneRinging = true;
+            PsychPortAudio('Stop',exp.audio);
+            PsychPortAudio('FillBuffer',exp.audio,exp.ringTone);
+            PsychPortAudio('Start',exp.audio);
             logEvent('PhoneRingStart');
         elseif(exp.phoneRinging && ~exp.ringDismiss)
             status = PsychPortAudio('GetStatus',exp.audio);
             if(~status.Active)
-                disp('phoneRinging = false');
                 exp.phoneRinging = false;
                 logEvent('PhoneRingExpired');
             end
@@ -126,7 +147,7 @@ function results = NavSuite()
     
     logEvent('StopExperiment');
     disp('Stopping.');
-    Screen('Close',exp.scr);
+    Screen('CloseAll');
     ShowCursor();
     
     % Flush and close data files, if needed.
