@@ -64,6 +64,10 @@ function results = NavSuite()
         exp.scrRect(3) - areaPadding, ...
         areaPadding + 48];
     exp.navBackButtonText = 'Back';
+    backTextRect = Screen('TextBounds', exp.scr, exp.navBackButtonText);
+    [rmx,rmy] = RectCenter(exp.navBackButtonRect);
+    exp.navBackButtonTextCoords = ...
+        [rmx - backTextRect(3)/2, rmy - backTextRect(4)/2 ];
     
     exp.symButtonWidth = exp.scrRect(4) / 4;
     exp.symButtonHeight = 48;
@@ -96,13 +100,6 @@ function results = NavSuite()
     
     loadPath('test');
     
-    exp.navPosX = exp.path(1,1);
-    exp.navPosY = exp.path(1,2);
-    exp.nodeIndex = 1;
-    exp.navDragging = false;
-    exp.navDragLastX = 0;
-    exp.navDragLastY = 0;
-    
     logEvent('StartExperiment');
     
     while(exp.state ~= exp.STOP)
@@ -121,19 +118,18 @@ function results = NavSuite()
         WaitSecs('UntilTime',lastLoop + loopDelay);
         
         if(exp.phoneRinging && exp.ringDismiss)
-            PsychPortAudio('Stop',exp.audio);
+            PsychPortAudio('Stop',exp.ringSlave);
             doClick(); % This needs to be here so that the click itself is not cancelled
         elseif(exp.ringScheduled && GetSecs() > exp.ringAt)
             disp('Starting ringtone');
             exp.ringScheduled = false;
             exp.ringDismiss = false;
             exp.phoneRinging = true;
-            PsychPortAudio('Stop',exp.audio);
-            PsychPortAudio('FillBuffer',exp.audio,exp.ringTone);
-            PsychPortAudio('Start',exp.audio);
+            PsychPortAudio('Stop',exp.ringSlave);
+            PsychPortAudio('Start',exp.ringSlave);
             logEvent('PhoneRingStart');
         elseif(exp.phoneRinging && ~exp.ringDismiss)
-            status = PsychPortAudio('GetStatus',exp.audio);
+            status = PsychPortAudio('GetStatus',exp.ringSlave);
             if(~status.Active)
                 exp.phoneRinging = false;
                 logEvent('PhoneRingExpired');

@@ -2,6 +2,15 @@ function doNav()
     global exp;
     
     if(exp.redraw)
+        visRect = [ ...
+            exp.navPosX - exp.mx, exp.navPosY - exp.my, ...
+            exp.navPosX + exp.mx, exp.navPosY + exp.my];
+        for i=exp.nodeIndex:length(exp.path)
+            if(IsInRect(exp.path(i,1),exp.path(i,2),visRect) && ~exp.path(i,4))
+                exp.path(i,4) = 1;
+                %disp(['Node ' num2str(i) ' seen.']);
+            end
+        end
         workingPath = exp.path;
         workingPath(:,1) = workingPath(:,1) - exp.navPosX;
         workingPath(:,2) = workingPath(:,2) - exp.navPosY;
@@ -20,6 +29,9 @@ function doNav()
         end
         Screen('FillRect', exp.scr, exp.navButtonColor, exp.navBackButtonRect);
         Screen('FrameRect', exp.scr, 255, exp.navBackButtonRect, 1);
+        Screen('DrawText', exp.scr, exp.navBackButtonText, ...
+            exp.navBackButtonTextCoords(1), exp.navBackButtonTextCoords(2), ...
+            255);
         
         Screen('FillRect', exp.scr, exp.navButtonSym1Color, exp.navButtonSym1Rect);
         Screen('FrameRect', exp.scr, 255, exp.navButtonSym1Rect, 1);
@@ -49,7 +61,7 @@ function doNav()
         logEvent('ReturnToStandby');
         
     elseif(~exp.clicked && IsInRect(x,y,exp.navButtonSym1Rect) && ~exp.navDragging)
-        if(exp.path(exp.nodeIndex,3) == 1)
+        if(exp.path(exp.nodeIndex,3) == 1 && exp.path(exp.nodeIndex,4))
             exp.path(exp.nodeIndex,3) = 4;
             exp.nodeIndex = exp.nodeIndex + 1;
             logEvent('NavReportSymbol,1,Correct');
@@ -60,7 +72,7 @@ function doNav()
         expRedraw();
 
     elseif(~exp.clicked && IsInRect(x,y,exp.navButtonSym2Rect) && ~exp.navDragging)
-        if(exp.path(exp.nodeIndex,3) == 2)
+        if(exp.path(exp.nodeIndex,3) == 2 && exp.path(exp.nodeIndex,4))
             exp.path(exp.nodeIndex,3) = 4;
             exp.nodeIndex = exp.nodeIndex + 1;
             logEvent('NavReportSymbol,2,Correct');
@@ -71,7 +83,7 @@ function doNav()
         expRedraw();
 
     elseif(~exp.clicked && IsInRect(x,y,exp.navButtonSym3Rect) && ~exp.navDragging)
-        if(exp.path(exp.nodeIndex,3) == 3)
+        if(exp.path(exp.nodeIndex,3) == 3 && exp.path(exp.nodeIndex,4))
             exp.path(exp.nodeIndex,3) = 4;
             exp.nodeIndex = exp.nodeIndex + 1;
             logEvent('NavReportSymbol,3,Correct');
@@ -95,5 +107,10 @@ function doNav()
         exp.navDragLastX = x;
         exp.navDragLastY = y;
         expRedraw();
+    end
+    
+    if(exp.nodeIndex > length(exp.path) && ~exp.pathComplete) % Complete
+        logEvent('NavPathComplete');
+        exp.pathComplete = true;
     end
 end
