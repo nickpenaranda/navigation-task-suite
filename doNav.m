@@ -16,6 +16,7 @@ function doNav()
         for i=exp.nodeIndex:length(exp.path)
             if(IsInRect(exp.path(i,1),exp.path(i,2),visRect) && ~exp.path(i,4))
                 exp.path(i,4) = 1;
+                logEvent(sprintf('NavNodeFound,%d,%d',i,exp.path(i,3)));
                 %disp(['Node ' num2str(i) ' seen.']);
             end
         end
@@ -101,13 +102,13 @@ function doNav()
         doClick();
         expRedraw();
 
-    elseif(~exp.navDragging)
+    elseif(~exp.navDragging && ~exp.clicked)
         exp.navDragging = true;
         exp.navDragLastX = x;
         exp.navDragLastY = y;
         logEvent(sprintf('NavDragStart,%d,%d',exp.navPosX,exp.navPosY));
         
-    else
+    elseif(~exp.clicked)
         deltaX = x - exp.navDragLastX;
         deltaY = y - exp.navDragLastY;
         exp.navPosX = exp.navPosX - deltaX;

@@ -60,7 +60,7 @@ function ExpListener_OpeningFcn(hObject, eventdata, handles, varargin)
     % ---------- Program parameters ----------
     exp.DEBUG = true;
     PORT = 'COM2';
-    exp.SCREEN_NUM = 1;
+    exp.SCREEN_NUM = 0;
     % ---------- Program parameters ----------
     
     % Global state stuff (exp.state)
