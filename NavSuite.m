@@ -1,10 +1,16 @@
 function results = NavSuite()
+% results = NavSuite()
+%
+% (Part of the Navigation Task Suite package)
+% The main loop function.  Handles all one-time calculations and pop-
+% ulates much of the exp global variable.
+%
+% (c) 2013 Nick Penaranda, GMU Arch Lab (ARG -- Dr. Carryl Baldwin)
     global exp;
     results = {};
     
     maxTPS = 100;
     loopDelay = 1 / maxTPS;
-    lastLoop = GetSecs();
     
     Screen('Preference', 'SuppressAllWarnings', true);
 

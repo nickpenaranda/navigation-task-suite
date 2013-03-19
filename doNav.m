@@ -1,4 +1,12 @@
 function doNav()
+% doNav()
+%
+% (Part of the Navigation Task Suite package)
+% Navigation Task subscreen
+%
+% Presents the perceptual navigation task to the participant.
+%
+% (c) 2013 Nick Penaranda, GMU Arch Lab (ARG -- Dr. Carryl Baldwin)
     global exp;
     
     if(exp.redraw)

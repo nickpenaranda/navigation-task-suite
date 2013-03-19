@@ -1,4 +1,14 @@
 function doStandby()
+% doStandby()
+%
+% (Part of the Navigation Task Suite package)
+% Standby or "Home" subscreen
+%
+% Displays two big buttons -- dismiss phone and enter navigation to
+% trigger respective functions.  Small button in the lower right to exit
+% (Future, non-development versions should remove that --NP)
+%
+% (c) 2013 Nick Penaranda, GMU Arch Lab (ARG -- Dr. Carryl Baldwin)
     global exp;
     
     PHONE_SCREEN_DURATION = 1.5; % Seconds

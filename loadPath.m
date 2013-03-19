@@ -1,4 +1,14 @@
-function path = loadPath(name)
+function path = loadPath( name )
+% path = loadPath( name )
+%
+% (Part of the Navigation Task Suite package)
+% Loads a premade path into the exp global variable.  Optionally returns
+% the path as well.
+%
+% name              Non-qualified, pathless, extensionless name of path
+%                   to load (e.g., 'test')
+%
+% (c) 2013 Nick Penaranda, GMU Arch Lab (ARG -- Dr. Carryl Baldwin)
     global exp;
     
     pathIn = load(['path\\' name '.path'],'-MAT');

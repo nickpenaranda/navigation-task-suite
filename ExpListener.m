@@ -1,4 +1,15 @@
 function varargout = ExpListener(varargin)
+% varargout = ExpListener(varargin)
+%
+% (Part of the Navigation Task Suite package)
+% Launches the experiment listener.  This is the GUI that maintains
+% state outside of the PTB experiment window.  Close this to force the
+% experiment to end and finalize devices and logs.
+%
+% (c) 2013 Nick Penaranda, GMU Arch Lab (ARG -- Dr. Carryl Baldwin)
+%
+% (auto-generated annotation below)
+% ----
 % EXPLISTENER M-file for ExpListener.fig
 %      EXPLISTENER, by itself, creates a new EXPLISTENER or raises the existing
 %      singleton*.

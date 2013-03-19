@@ -1,4 +1,18 @@
 function createNav()
+% createNav()
+%
+% (Part of the Navigation Task Suite package)
+% Standalone program to design paths for the navigation task.
+% 
+% Left-click        places nodes
+% Shift+Left-click  delete last node
+% Right-click       change type of last node
+%
+% Click the Save button when finished.  This will bring up a save
+% dialog to name your path.  Paths should be placed in the path sub-
+% directory.
+%
+% (c) 2013 Nick Penaranda, GMU Arch Lab (ARG -- Dr. Carryl Baldwin)
     Screen('Preference', 'SuppressAllWarnings', true);
     Screen('Preference', 'SkipSyncTests', 2);
 

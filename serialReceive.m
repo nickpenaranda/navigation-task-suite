@@ -1,4 +1,12 @@
 function serialReceive(obj, event)
+% serialReceive( obj, event )
+%
+% (Part of the Navigation Task Suite package)
+% Serial interface callback function.  This function defines the imperative
+% commands that the navigation task suite can respond to.  See
+% ExpListener.m for serial port setup defaults
+%
+% (c) 2013 Nick Penaranda, GMU Arch Lab (ARG -- Dr. Carryl Baldwin)
     global exp;
     persistent mode datalen;
     
