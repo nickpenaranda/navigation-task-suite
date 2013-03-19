@@ -94,10 +94,7 @@ function results = NavSuite()
     exp.pathWeight = 2;
     exp.pathScale = 4000;
     
-    pathIn = load('test.path','-MAT'); % Placeholder
-    exp.path = pathIn.path;
-    exp.path(:,1:2) = exp.path(:,1:2) * exp.pathScale;
-    disp(exp.path);
+    loadPath('test');
     
     exp.navPosX = exp.path(1,1);
     exp.navPosY = exp.path(1,2);
