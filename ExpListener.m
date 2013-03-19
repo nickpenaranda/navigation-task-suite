@@ -80,12 +80,14 @@ function ExpListener_OpeningFcn(hObject, eventdata, handles, varargin)
     exp.audio = PsychPortAudio('Open',[],9,[],44100,2);
     PsychPortAudio('Start',exp.audio);
     
+    wavLocation = 'sounds\\';
+    
     exp.ringSlave = PsychPortAudio('OpenSlave',exp.audio,1,2,[1 2]);
-    exp.ringTone = wavread('ringtone.wav','double')';
+    exp.ringTone = wavread([wavLocation 'ringtone.wav'],'double')';
     PsychPortAudio('FillBuffer',exp.ringSlave,exp.ringTone);
     
     exp.clickSlave = PsychPortAudio('OpenSlave',exp.audio,1,2,[1 2]);
-    exp.click = wavread('blip_click.wav','double')';
+    exp.click = wavread([wavLocation 'blip_click.wav'],'double')';
     PsychPortAudio('FillBuffer',exp.clickSlave,exp.click);
 
     exp.ParticipantNumber = '0';
@@ -96,6 +98,8 @@ function ExpListener_OpeningFcn(hObject, eventdata, handles, varargin)
     exp.ringScheduled = false;
     exp.ringDismiss = false;
     exp.phoneRinging = false;
+    
+    exp.state = exp.STOP;
     
     handles.output = hObject;
     guidata(hObject, handles);
@@ -142,11 +146,13 @@ function btnDebug_Callback(hObject, eventdata, handles)
 
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
     global exp;
-    exp.state = exp.STOP;
-    fclose(exp.serial);
-    if(exp.logFile ~= -1)
-        fclose(exp.logFile);
+    
+    if(exp.state ~= exp.STOP)
+        disp('**** Shut down the task first! ****');
+    else
+        fclose(exp.serial);
+        fclose('all');
+        PsychPortAudio('Close');
+        % Hint: delete(hObject) closes the figure
+        delete(hObject);
     end
-    PsychPortAudio('Close');
-    % Hint: delete(hObject) closes the figure
-    delete(hObject);

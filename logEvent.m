@@ -34,11 +34,13 @@ function logEvent( entry )
     end
 
     record = sprintf('%f,%s\n',GetSecs() - exp.startTime,entry);
-    if(exp.logFile == -1)
-        disp('Warning: No active log file. Could not write event:');
-        disp(['  ' record]);
-    else
+    
+    try
         fprintf(exp.logFile, record);
+    catch err
+        disp('Failed to write record:');
+        disp(record);
+        disp(err.message)
     end
 end
 
