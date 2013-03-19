@@ -102,11 +102,6 @@ function checkListen_Callback(hObject, eventdata, handles)
 function btnStartTask_Callback(hObject, eventdata, handles)
     global exp;
 
-    % Init logfile
-    logName = sprintf('Log_%s_%s.csv', ...
-        exp.ParticipantNumber, ...
-        datestr(now,'yy.mm.dd_HH.MM.SS'));
-    exp.logFile = fopen(logName,'wt');
     fprintf(exp.logFile,'time (s),message type,data1,data2,data3,data4,data5,data6,data7,data8\n');
     
     exp.state = exp.STANDBY;
@@ -136,6 +131,9 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
     global exp;
     exp.state = exp.STOP;
     fclose(exp.serial);
+    if(exp.logFile ~= -1)
+        fclose(exp.logFile);
+    end
     PsychPortAudio('Close');
     % Hint: delete(hObject) closes the figure
     delete(hObject);

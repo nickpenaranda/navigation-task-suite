@@ -153,7 +153,6 @@ function results = NavSuite()
     
     % Flush and close data files, if needed.
     
-    fclose(exp.logFile);
     Screen('Preference', 'SuppressAllWarnings', false);
 
 end

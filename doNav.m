@@ -38,7 +38,7 @@ function doNav()
     if(~any(buttons))
         if(exp.navDragging)
             exp.navDragging = false;
-            logEvent(sprintf('DraggedNav,%d,%d',exp.navPosX,exp.navPosY));
+            logEvent(sprintf('NavDragEnd,%d,%d',exp.navPosX,exp.navPosY));
         end
         exp.clicked = false;
         
@@ -85,6 +85,8 @@ function doNav()
         exp.navDragging = true;
         exp.navDragLastX = x;
         exp.navDragLastY = y;
+        logEvent(sprintf('NavDragStart,%d,%d',exp.navPosX,exp.navPosY));
+        
     else
         deltaX = x - exp.navDragLastX;
         deltaY = y - exp.navDragLastY;
