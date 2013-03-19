@@ -7,6 +7,7 @@ function logEvent( entry )
             exp.ParticipantNumber, ...
             datestr(now,'yy.mm.dd_HH.MM.SS'));
         exp.logFile = fopen(logName,'at');
+        fprintf(exp.logFile,'time (s),message type,data1,data2,data3,data4,data5,data6,data7,data8\n');
     end
 
     record = sprintf('%f,%s\n',GetSecs() - exp.startTime,entry);

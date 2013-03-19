@@ -102,8 +102,6 @@ function checkListen_Callback(hObject, eventdata, handles)
 function btnStartTask_Callback(hObject, eventdata, handles)
     global exp;
 
-    fprintf(exp.logFile,'time (s),message type,data1,data2,data3,data4,data5,data6,data7,data8\n');
-    
     exp.state = exp.STANDBY;
     exp.stateExpireTime = GetSecs();
     expRedraw();
