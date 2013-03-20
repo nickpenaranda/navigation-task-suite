@@ -60,15 +60,18 @@ function ExpListener_OpeningFcn(hObject, eventdata, handles, varargin)
     % ---------- Program parameters ----------
     exp.DEBUG = true;
     PORT = 'COM2';
-    exp.SCREEN_NUM = 0;
+    exp.SCREEN_NUM = 1;
+    exp.ALERT_SCREEN_NUM = 1;
     % ---------- Program parameters ----------
     
+    exp.alertLocation = 'alerts\\';
+    exp.wavLocation = 'sounds\\';
+
     % Global state stuff (exp.state)
     exp.STANDBY = 0;
     exp.NAV = 1;
     exp.PHONE = 2;
-    exp.ALARM = 3;
-    exp.STOP = 4;
+    exp.STOP = 3;
     
     % Serial port init stuff
     exp.serial = serial(PORT);
@@ -80,24 +83,46 @@ function ExpListener_OpeningFcn(hObject, eventdata, handles, varargin)
     exp.audio = PsychPortAudio('Open',[],9,[],44100,2);
     PsychPortAudio('Start',exp.audio);
     
-    wavLocation = 'sounds\\';
-    
+    % Create audio slaves
     exp.ringSlave = PsychPortAudio('OpenSlave',exp.audio,1,2,[1 2]);
-    exp.ringTone = wavread([wavLocation 'ringtone.wav'],'double')';
+    exp.ringTone = wavread([exp.wavLocation 'ringtone.wav'],'double')';
     PsychPortAudio('FillBuffer',exp.ringSlave,exp.ringTone);
     
     exp.clickSlave = PsychPortAudio('OpenSlave',exp.audio,1,2,[1 2]);
-    exp.click = wavread([wavLocation 'blip_click.wav'],'double')';
+    exp.click = wavread([exp.wavLocation 'blip_click.wav'],'double')';
     PsychPortAudio('FillBuffer',exp.clickSlave,exp.click);
+    
+    exp.alertSlave = PsychPortAudio('OpenSlave',exp.audio,1,2,[1 2]);
 
     exp.ParticipantNumber = '0';
     exp.logFile = -1;
     exp.startTime = GetSecs();
     
+    % Phone state
     exp.ringAt = GetSecs();
     exp.ringScheduled = false;
     exp.ringDismiss = false;
     exp.phoneRinging = false;
+    
+    % Dash state
+    exp.triggerAlert = false;
+    exp.alertResponded = false;
+    exp.redrawDash = true;
+    
+    % Alert data
+    exp.alertConditions = { ...
+        'High Vis.jpg', '','HIGH'; ...
+        'Low Vis.jpg', '','LOW'; ...
+        '', 'High Aud.wav','HIGH'; ...
+        '', 'Low Aud.wav','LOW'; ...
+        '', 'High Tac.wav','HIGH'; ...
+        '', 'Low Tac.wav','LOW'; ...
+        'High Vis.jpg', 'High Aud.wav','HIGH'; ...
+        'Low Vis.jpg', 'Low Aud.wav','LOW'; ...
+        'High Vis.jpg', 'High Tac.wav','HIGH'; ...
+        'Low Vis.jpg', 'Low Tac.wav','LOW'; ...
+        '', 'High TacAud.wav','HIGH'; ...
+        '', 'Low TacAud.wav','LOW'};
     
     exp.state = exp.STOP;
     

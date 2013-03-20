@@ -17,9 +17,13 @@ function results = NavSuite()
     % PTB init stuff
     AssertOpenGL;
     if(exp.DEBUG)
-        [exp.scr,exp.scrRect] = Screen('OpenWindow',exp.SCREEN_NUM,[0, 0, 0],[32 32 800 480]);
+        [exp.scr,exp.scrRect] = Screen('OpenWindow', ...
+            exp.SCREEN_NUM,[0, 0, 0],[32 32 32+800 32+480]);
+        [exp.dashScr,exp.alertScrRect] = Screen('OpenWindow', ...
+            exp.ALERT_SCREEN_NUM,[0, 0, 0], [848 32 848+640 32+480]);
     else
         [exp.scr,exp.scrRect] = Screen('OpenWindow',exp.SCREEN_NUM,[0, 0, 0],[]);
+        [exp.dashScr,exp.alertScrRect] = Screen('OpenWindow',exp.ALERT_SCREEN_NUM,[0, 0, 0], []);
     end
     
     Screen('TextFont',exp.scr,'Arial');
@@ -33,6 +37,10 @@ function results = NavSuite()
     [exp.mx, exp.my] = RectCenter(exp.scrRect);
     
     % Load alarm/task data
+    img = imread([exp.alertLocation 'No Vis.jpg']);
+    exp.blankTex = Screen('MakeTexture',exp.dashScr,img);
+    
+    exp.dashTex = exp.blankTex;
 
     % One-time position calculations
     
@@ -110,6 +118,7 @@ function results = NavSuite()
     
     while(exp.state ~= exp.STOP)
         lastLoop = GetSecs();
+        doDash();
         switch(exp.state)
             case exp.STANDBY
                 doStandby();
@@ -117,8 +126,6 @@ function results = NavSuite()
                 doPhone();
             case exp.NAV
                 doNav();
-            case exp.ALARM
-                doAlarm();
         end
         
         WaitSecs('UntilTime',lastLoop + loopDelay);

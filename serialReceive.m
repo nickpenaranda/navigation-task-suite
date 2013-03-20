@@ -8,14 +8,17 @@ function serialReceive(obj, event)
 %
 % (c) 2013 Nick Penaranda, GMU Arch Lab (ARG -- Dr. Carryl Baldwin)
     global exp;
-    persistent mode datalen;
+    persistent mode cmdbuffer;
     
     CMD = 1;
-    LENGTH = 2;
-    DATA = 3;
+    DATA = 2;
     
     if(isempty(mode))
         mode = CMD;
+    end
+    
+    if(isempty(cmdbuffer))
+        cmdbuffer = '';
     end
     
     if(mode == CMD) 
@@ -25,32 +28,31 @@ function serialReceive(obj, event)
             logEvent('SerialReceive,START');
         elseif(strcmp(cmd,'WARN'))
             disp('WARN received');
-            logEvent('SerialReceive,WARNING');
+            exp.triggerAlert = true;
+            logEvent('AlertTriggered');
         elseif(strcmp(cmd,'RESP'))
             disp('RESP received');
-            logEvent('SerialReceive,RESPONSE');
+            exp.alertResponded = true;
+            logEvent('AlertResponse');
         elseif(strcmp(cmd,'RING'))
             disp('RING received');
-            logEvent('SerialReceive,SCHEDULE_RING');
-            schedulePhoneRing(rand() * 5);
-        elseif(strcmp(cmd,'DATA')) % Generic data
-            disp('DATA received');
-            logEvent('SerialReceive,DATA_INIT');
-            mode = LENGTH;
+            cmdbuffer = 'RING';
+            mode = DATA;
+        elseif(strcmp(cmd,'PREP'))
+            disp('PREP received');
+            cmdbuffer = 'PREP';
+            mode = DATA;
         else
             disp(['UNKNOWN received (' cmd ')']);
-        end 
-    elseif(mode == LENGTH)
-        datalen = fscanf(obj, '%d\n');
-        disp(['Expecting ' num2str(datalen) ' bytes']);
-        mode = DATA;
-        logEvent(['SerialReceive,DATA_LENGTH,' num2str(datalen)]);
+        end
     elseif(mode == DATA)
-        exp.serialdata = fread(obj,datalen);
+        data = fscanf(obj, '%s\n');
         flushinput(obj);
-        disp('Received:');
-        disp(exp.serialdata);
+        if(strcmp(cmdbuffer,'RING'))
+            schedulePhoneRing(str2double(data))
+        elseif(strcmp(cmdbuffer,'PREP'))
+            prepareAlert(str2double(data));
+        end
         mode = CMD;
-        logEvent(['SerialReceive,DATA_RECEIVED,' num2str(datalen)]);
     end
 end
