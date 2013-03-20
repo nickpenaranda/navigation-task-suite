@@ -16,6 +16,8 @@ function prepareAlert( alertIndex )
     if(~isempty(imgFile))
        img = imread([exp.alertLocation imgFile]);
         exp.alertTex = Screen('MakeTexture', exp.dashScr, img);
+    else
+        exp.alertTex = exp.blankTex;
     end
 
     if(~isempty(sndFile))
