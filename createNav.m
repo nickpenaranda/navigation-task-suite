@@ -19,7 +19,7 @@ function createNav()
     AssertOpenGL;
 
     winSize = 800;
-    [win, rect] = Screen('OpenWindow',1,[0, 0, 0],[32 32 winSize winSize]);
+    [win, rect] = Screen('OpenWindow',0,[0, 0, 0],[32 32 winSize winSize]);
     
     Screen('TextFont',win,'Arial');
     

@@ -60,8 +60,8 @@ function ExpListener_OpeningFcn(hObject, eventdata, handles, varargin)
     % ---------- Program parameters ----------
     exp.DEBUG = true;
     PORT = 'COM2';
-    exp.SCREEN_NUM = 1;
-    exp.ALERT_SCREEN_NUM = 1;
+    exp.SCREEN_NUM = 0;
+    exp.ALERT_SCREEN_NUM = 0;
     % ---------- Program parameters ----------
     
     exp.alertLocation = 'alerts\\';
@@ -150,7 +150,7 @@ function btnStartTask_Callback(hObject, eventdata, handles)
     exp.stateExpireTime = GetSecs();
     expRedraw();
     
-    schedulePhoneRing(5);
+    schedulePhoneRing(15);
     % Run the task front-end
     NavSuite();
     
